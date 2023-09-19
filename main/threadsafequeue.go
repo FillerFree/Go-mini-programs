@@ -6,19 +6,19 @@ import (
 )
 
 type ConcurrentQueue struct {
-	queue []int32
+	queue []interface{}
 	mu    sync.Mutex
 }
 
 var wgE sync.WaitGroup
 
-func (q *ConcurrentQueue) enqueue(num int32) {
+func (q *ConcurrentQueue) enqueue(object interface{}) {
 	q.mu.Lock()
 	defer q.mu.Unlock()
-	q.queue = append(q.queue, num)
+	q.queue = append(q.queue, object)
 }
 
-func (q *ConcurrentQueue) dequeue() int32 {
+func (q *ConcurrentQueue) dequeue() interface{} {
 	if len(q.queue) == 0 {
 		return 0
 	}
@@ -29,7 +29,7 @@ func (q *ConcurrentQueue) dequeue() int32 {
 
 func main() {
 	q1 := ConcurrentQueue{
-		queue: make([]int32, 0),
+		queue: make([]interface{}, 0),
 	}
 	for i := 0; i < 100000; i += 1 {
 		wgE.Add(1)
